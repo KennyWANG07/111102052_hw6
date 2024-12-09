@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>111102052_HW6_1A2B</title>
+    <style>
+        /* 加入簡單的樣式美化頁面 */
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        input { padding: 5px; font-size: 16px; }
+        button { padding: 5px 10px; font-size: 16px; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>111102052_HW6_1A2B</h1>
+    <p>請輸入四位數字：</p>
+    <input id="guess" type="text" maxlength="4" placeholder="輸入四位不重複數字">
+    <button onclick="checkAnswer()">提交</button>
+    <div class="result">
+        <h3>猜測結果：</h3>
+        <ul id="results"></ul>
+        <p id="attempts">總共猜測次數：0</p>
+    </div>
+    <script >
+        // 產生謎底的隨機數字
+let secret = generateSecret();
+let attempts = 0;
+
+function generateSecret() {
+    const digits = Array.from({ length: 10 }, (_, i) => i);
+    const secretArray = [];
+    for (let i = 0; i < 4; i++) {
+        const randomIndex = Math.floor(Math.random() * digits.length);
+        secretArray.push(digits.splice(randomIndex, 1)[0]);
+    }
+    return secretArray.join('');
+}
+
+// 檢查用戶輸入
+function checkAnswer() {
+    const guess = document.getElementById('guess').value;
+    
+    // 檢查輸入格式
+    if (!/^\d{4}$/.test(guess)) {
+        alert('請輸入4位數字！');
+        return;
+    }
+    if (new Set(guess).size !== 4) {
+        alert('數字不可重複！');
+        return;
+    }
+
+    attempts++;
+    const result = compare(guess, secret);
+    document.getElementById('results').innerHTML += `<li>${guess}: ${result}</li>`;
+    document.getElementById('attempts').innerText = `總共猜測次數：${attempts}`;
+
+    if (result === '4A0B') {
+        alert(`恭喜！你答對了！總共猜了 ${attempts} 次。`);
+        resetGame();
+    }
+
+    document.getElementById('guess').value = ''; // 清空輸入框
+}
+
+// 比對用戶輸入與謎底
+function compare(guess, secret) {
+    let A = 0, B = 0;
+    for (let i = 0; i < 4; i++) {
+        if (guess[i] === secret[i]) {
+            A++;
+        } else if (secret.includes(guess[i])) {
+            B++;
+        }
+    }
+    return `${A}A${B}B`;
+}
+
+// 重設遊戲
+function resetGame() {
+    secret = generateSecret();
+    attempts = 0;
+    document.getElementById('results').innerHTML = '';
+    document.getElementById('attempts').innerText = '總共猜測次數：0';
+}
+
+    </script>
+</body>
+</html>
